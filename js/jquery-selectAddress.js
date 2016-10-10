@@ -12,7 +12,7 @@
 	var opt0;//select默认显示
 	var dsy;//option集对象
 	var s;//目前并未有什么实际用处。s.length可以用3或者item.childNodes.length代替
-	var childList;
+	var classNameL = new Array();
 	$.fn.CascadeSelect = function(options) {
 		var dft = {
 			//以下为该插件的属性及其默认值
@@ -23,25 +23,21 @@
 		opt0 = ops.defaultName;
 		s = ops.defaultClass;
 		var items; //定义全局的对象change方法里面需要使用
-		return this.each(function(i, item) {
+		
+		return this.each(function(flag, item) {
 			dsy = new Dsy(); //创建一个dsy类型，用于加载地址选项	
-			childList = item.querySelectorAll("select"); //获得子元素级
+			var childList = item.querySelectorAll("select"); //获得子元素级
+			classNameL[flag]=item.className;
 			//遍历整个子元素集合（因为换行默认为一个[object Text]类型的元素）
-//			for(i = 0; i < childList.length; i++) {
-//				//判断是否该元素是select元素，如果不是则移除它
-//				if(!(Object.prototype.toString.call(childList[i]) === "[object HTMLSelectElement]")) {
-//					item.removeChild(childList[i]);
-//				}
-//			}
 			items=item;
 			//将移除其他元素之后的item赋值给items
 			function _init_area() { //初始化函数
 				//添加select的change方法，因为change需要定义为全局函数，因此需要将对象一并传过去，
-				for(i = 0; i < s.length - 1; i++) {
-					childList[i].onchange = new Function("$.fn.CascadeSelect.change(" + (i + 1) + ")");
+				for(var i = 0; i < s.length - 1; i++) {
+					childList[i].onchange = new Function("$.fn.CascadeSelect.change(" + (i + 1) + ",this.parentNode,"+flag+")");
 				}
 				//调用change0，使第一个select赋值
-				$.fn.CascadeSelect.change(0);
+				$.fn.CascadeSelect.change(0, items,flag);
 			}
 			//定义一个dsy对象
 			function Dsy() {
@@ -436,7 +432,12 @@
 		});
 
 	};
-	$.fn.CascadeSelect.change = function(v) {
+	$.fn.CascadeSelect.change = function(v, items,index) {
+		if(!(items.className==classNameL[index])){
+			
+			items=items.parentNode;
+		}
+		childList = items.querySelectorAll("select");
 		var str = "0";
 		//str等于select被选中的值相连
 		for(i = 0; i < v; i++) {
@@ -463,7 +464,7 @@
 					}
 				} //end if v
 				if(++v < s.length) {
-					$.fn.CascadeSelect.change(v);
+					$.fn.CascadeSelect.change(v, items,index);
 				}
 			} //End with
 	}
