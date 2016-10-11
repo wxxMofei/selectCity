@@ -16,7 +16,7 @@
 		var dft = {
 			//以下为该插件的属性及其默认值
 			defaultName: ["省份", "地级市", "市、县级市"], //默认显示
-			defaultClass: [".s_province", ".s_city", ".s_county"], //select的class目前没有用到
+			defaultClass: [".s_province", ".s_city", ".s_county"]//select的class目前没有用到
 		};
 		var ops = $.extend(dft, options);
 		opt0 = ops.defaultName;
